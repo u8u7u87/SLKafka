@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.slimer.kafka.client.constant.ConfigProp;
 import com.slimer.kafka.client.stereotype.SLTopicProducer;
@@ -22,10 +23,11 @@ import com.slimer.kafka.client.utils.ResourceLoader;
  * @since Mar 24, 2016
  */
 @Aspect
+@Component
 public class SLProduceAnnotationAspect {
     private static final Logger logger= LoggerFactory.getLogger(SLProduceAnnotationAspect.class);
     private KafkaProducer<String, Object> kafkaProducer=null;
-    @Pointcut(value = "execution(public * *(..))")
+    @Pointcut(value = "execution(* *(..))")
     public void anyPublicMethod(){}
 
     @Around("anyPublicMethod() && @annotation(topicProducer)&& args(value)")

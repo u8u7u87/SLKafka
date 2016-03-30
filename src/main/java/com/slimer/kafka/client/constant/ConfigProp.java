@@ -1,6 +1,7 @@
 package com.slimer.kafka.client.constant;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +21,7 @@ public class ConfigProp {
     public static final String SESSION_TIMEOUT_MS = "session.timeout.ms";
     public static final String BLOCK_ON_BUFFER_FULL = "block.on.buffer.full";
     public static final String TOPIC = "topic";
-    public static final String GROUP = "group";
+    public static final String GROUP = "group.id";
     public static final String REQUEST_TIMEOUT_MS = "request.timeout.ms";
     /*private static Map<Method, Properties> methodPropCache;*/
     private static Map<Method, Properties> consumerPropCache;
@@ -28,19 +29,31 @@ public class ConfigProp {
 
 
     public  static void producerPut(Method method,Properties prop){
+        if (null==producerPropCache) {
+            producerPropCache=new HashMap<>();
+        }
         producerPropCache.put(method,prop);
     }
 
     public  static Properties producerGet(Method method){
-        return producerPropCache.get(method);
+        if (null!=producerPropCache) {
+            return producerPropCache.get(method);
+        }
+        return null;
     }
 
     public  static void consumerPut(Method method,Properties prop){
+        if (null==consumerPropCache) {
+            consumerPropCache=new HashMap<>();
+        }
         consumerPropCache.put(method,prop);
     }
 
     public  static Properties consumerGet(Method method){
-        return consumerPropCache.get(method);
+        if (null!=consumerPropCache) {
+            return consumerPropCache.get(method);
+        }
+        return null;
     }
    /* public static Map<Method, Properties> getConsumerPropCache() {
         if (CollectionUtils.isEmpty(consumerPropCache)) {

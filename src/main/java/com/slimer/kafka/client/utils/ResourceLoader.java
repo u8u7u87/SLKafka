@@ -33,10 +33,10 @@ public class ResourceLoader {
             try {
                 Set<String> propNames = properties.stringPropertyNames();
                 if (propNames.size() == 0) {
-                    properties.load(Resources.getResource(proPath).openStream());
+                    properties.load(this.getClass().getResource(proPath).openStream());
                 } else {
                     Properties temp = new Properties();
-                    temp.load(Resources.getResource(proPath).openStream());
+                    temp.load(this.getClass().getResource(proPath).openStream());
                     for (String key : propNames) {
                         temp.setProperty(key, properties.getProperty(key));
                     }

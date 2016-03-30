@@ -3,6 +3,8 @@ package com.slimer.kafka.client;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,6 +34,7 @@ import com.slimer.kafka.client.stereotype.SLTopicProducer;
  */
 public class SLApplicationContext implements DisposableBean, ApplicationContextAware {
     private static final Logger logger = LoggerFactory.getLogger(SLApplicationContext.class);
+    private List<TopicConsume> consumeList=new ArrayList<>();
     private ApplicationContext applicationContext = null;
 
     public ApplicationContext getApplicationContext() {
@@ -54,15 +57,19 @@ public class SLApplicationContext implements DisposableBean, ApplicationContextA
     }
 
     private void handleScanClass(Map<String, Object> beanMap) {
-        Method[] methods = AopUtils.getTargetClass(beanMap).getDeclaredMethods();
-        for (Method method : methods) {
-            Annotation[] annotations = method.getAnnotations();
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof SLTopicConsumer) {
-                    handleConsumerClass(beanMap, method, (SLTopicConsumer) annotation);
-                }
-                if (annotation instanceof SLTopicProducer) {
-                    handleProducerClass(beanMap, method, (SLTopicProducer) annotation);
+        for (String key:beanMap.keySet()){
+            Object o=beanMap.get(key);
+
+            Method[] methods = AopUtils.getTargetClass(o).getDeclaredMethods();
+            for (Method method : methods) {
+                Annotation[] annotations = method.getAnnotations();
+                for (Annotation annotation : annotations) {
+                    if (annotation instanceof SLTopicConsumer) {
+                        handleConsumerClass(beanMap, method, (SLTopicConsumer) annotation);
+                    }
+                    if (annotation instanceof SLTopicProducer) {
+                        handleProducerClass(beanMap, method, (SLTopicProducer) annotation);
+                    }
                 }
             }
         }
@@ -71,7 +78,9 @@ public class SLApplicationContext implements DisposableBean, ApplicationContextA
     private void handleConsumerClass(Object object, Method method, SLTopicConsumer sltc) {
         Properties prop = loadConsumerProperties(sltc);
         ConfigProp.consumerPut(method, prop);
-        new TopicConsume().consume(object, method, prop);
+        TopicConsume topicConsume=new TopicConsume();
+        topicConsume.consume(object, method, prop);
+        consumeList.add(topicConsume);
     }
 
     private void handleProducerClass(Object object, Method method, SLTopicProducer sltp) {
@@ -148,6 +157,8 @@ public class SLApplicationContext implements DisposableBean, ApplicationContextA
 
     @Override
     public void destroy() throws Exception {
-
+        for (TopicConsume topicConsume : consumeList) {
+            topicConsume.shutDown();
+        }
     }
 }

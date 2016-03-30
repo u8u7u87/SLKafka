@@ -8,6 +8,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -24,6 +25,7 @@ import com.slimer.kafka.client.utils.ResourceLoader;
  */
 public class TopicConsume {
     private static final Logger logger= LoggerFactory.getLogger(TopicConsume.class);
+    ExecutorService executorService=null;
 
     public void consume(Object object, Method method, Properties prop){
 
@@ -37,16 +39,29 @@ public class TopicConsume {
                 if (records.count()==0) {
                     logger.info("receive nothing from broker.");
                 }else{
-                    ThreadPoolExecutor threadPoolExecutor= (ThreadPoolExecutor) Executors.newFixedThreadPool(records.count());
+                    executorService = Executors.newFixedThreadPool(records.count());
+                    //ThreadPoolExecutor threadPoolExecutor= (ThreadPoolExecutor) Executors.newFixedThreadPool(records.count());
                     for (ConsumerRecord<String,Object> record:records) {
                         logger.info("receive data:{}",record.toString());
                         logger.info("begin handle consumer data.");
-                        threadPoolExecutor.execute(new TopicConsumeTask(object,method,record));
+                        executorService.submit(new TopicConsumeTask(object,method,record));
+                        //threadPoolExecutor.execute(new TopicConsumeTask(object,method,record));
                     }
                 }
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void shutDown(){
+        if (null!=executorService) {
+            executorService.shutdown();
+            try {
+                executorService.awaitTermination(5, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                logger.error("shut down error:{}",  e);
+            }
         }
     }
 }
