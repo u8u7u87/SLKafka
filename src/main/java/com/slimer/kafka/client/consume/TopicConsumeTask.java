@@ -37,11 +37,17 @@ public class TopicConsumeTask implements Runnable {
     @Override
     public void run() {
         try {
-            method.invoke(object,record);
+            logger.info("method :{} begin invoke consumer,data:{}",method,record);
+            method.invoke(object,record.value());
+            logger.info("method :{} end invoke consumer,data:{}",method,record);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            logger.error("invoke error:",e);
+        } catch (IllegalArgumentException e) {
+            logger.error("invoke error:",e);
+        }  catch (InvocationTargetException e) {
+            logger.error("invoke error:",e);
+        }catch (RuntimeException e) {
+            logger.error("invoke error:",e);
         }
     }
 }

@@ -65,10 +65,10 @@ public class SLApplicationContext implements DisposableBean, ApplicationContextA
                 Annotation[] annotations = method.getAnnotations();
                 for (Annotation annotation : annotations) {
                     if (annotation instanceof SLTopicConsumer) {
-                        handleConsumerClass(beanMap, method, (SLTopicConsumer) annotation);
+                        handleConsumerClass(o, method, (SLTopicConsumer) annotation);
                     }
                     if (annotation instanceof SLTopicProducer) {
-                        handleProducerClass(beanMap, method, (SLTopicProducer) annotation);
+                        handleProducerClass(o, method, (SLTopicProducer) annotation);
                     }
                 }
             }

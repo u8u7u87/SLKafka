@@ -16,7 +16,9 @@ import org.springframework.util.CollectionUtils;
 public class ConfigProp {
     public static final String BOOTSTRAP_SERVER = "bootstrap.servers";
     public static final String KEY_DESERIALIZER = "key.deserializer";
+    public static final String KEY_SERIALIZER = "key.serializer";
     public static final String VALUE_DESERIALIZER = "value.deserializer";
+    public static final String VALUE_SERIALIZER = "value.serializer";
     public static final String AUTO_OFFSET_RESET = "auto.offset.reset";
     public static final String SESSION_TIMEOUT_MS = "session.timeout.ms";
     public static final String BLOCK_ON_BUFFER_FULL = "block.on.buffer.full";

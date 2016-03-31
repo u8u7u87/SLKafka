@@ -65,8 +65,8 @@ public class ResourceLoader {
     public Properties loadProducerProperties(Properties prop) {
         load("/properties/kafka.properties");
         prop.setProperty(ConfigProp.BOOTSTRAP_SERVER, properties.getProperty(ConfigProp.BOOTSTRAP_SERVER, "localhost:9092"));
-        prop.setProperty(ConfigProp.KEY_DESERIALIZER, properties.getProperty(ConfigProp.KEY_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer"));
-        prop.setProperty(ConfigProp.VALUE_DESERIALIZER, properties.getProperty(ConfigProp.VALUE_DESERIALIZER, "org.apache.kafka.common.serialization.StringDeserializer"));
+        prop.setProperty(ConfigProp.KEY_SERIALIZER, properties.getProperty(ConfigProp.KEY_SERIALIZER, "org.apache.kafka.common.serialization.StringSerializer"));
+        prop.setProperty(ConfigProp.VALUE_SERIALIZER, properties.getProperty(ConfigProp.VALUE_SERIALIZER, "org.apache.kafka.common.serialization.StringSerializer"));
         return prop;
     }
 

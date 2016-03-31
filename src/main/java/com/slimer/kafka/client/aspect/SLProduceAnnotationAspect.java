@@ -38,8 +38,8 @@ public class SLProduceAnnotationAspect {
             logger.info("producer method:{} send data:{} begin.",method,value);
             Properties methodProp= ConfigProp.producerGet(method);
             String topic=methodProp.get("topic").toString();
-            Properties temp=ResourceLoader.getResourceLoader().loadProducerProperties(methodProp);// 值传递?
-            kafkaProducer=new KafkaProducer<String, Object>(temp);
+            ResourceLoader.getResourceLoader().loadProducerProperties(methodProp);// 值传递?
+            kafkaProducer=new KafkaProducer<String, Object>(methodProp);
             kafkaProducer.send(new ProducerRecord<String, Object>(topic, value));
             logger.info("producer method:{} send data:{} end.",method,value);
         } catch (Exception e) {
